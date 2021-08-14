@@ -6,8 +6,10 @@ The flag of Nepal is notable for many reasons. One of them is that its compass-a
 
 ## I have some questions
 
-My big question is this: *how should step (18) be interpreted?* That's the step for generating the rays of the moon. 
+My big question is this: *how should step (18) be interpreted?* That's the step for generating the rays of the moon.
+
 > (18) Eight equal and similar triangles of the moon are to be made in the space lying inside the semi-circle of No. (16) and outside the arc of No. (17) of this Schedule.
+
 Here I've highlighted the semicircle and arc in question:
 
 ![Detail view of the moon in construction](highlight.png)
