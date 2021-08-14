@@ -18,6 +18,11 @@ const cross2d = (p, q) => {
   return p.x * q.y - p.y * q.x;
 };
 
+// Return the new endpoint when extending/contracting a line l by scalar n
+const extend = (l, n) => {
+  return new Point(l.p.x + n * (l.q.x - l.p.x), l.p.y + n * (l.q.y - l.p.y));
+};
+
 // Find the angle between two lines
 const angle = (l0, l1) => {
   let u = subtract(l0.q, l0.p);
@@ -66,20 +71,39 @@ const chord = (p, r, v) => {
 };
 
 // A function to find the intersection of two circles
-// Assume circles lie on XY plane, have two intersections, and have a finite slope
+// Assume circles lie on XY plane, have two intersections, and have a finite tangent slope
+// If circles are horizontally aligned (infinite tangent slope), rotate the frame by 90 degrees
+// Remember to un-rotate at the end
 const twoCircles = (p0, r0, p1, r1) => {
-  let slope = -(p0.x - p1.x) / (p0.y - p1.y);
+  let horizontal = p0.y == p1.y;
+  let q0, q1;
+  if (horizontal) {
+    q0 = p0.rotate(new Point(0, 0), 90);
+    q1 = p1.rotate(new Point(0, 0), 90);
+  } else {
+    q0 = new Point(p0.x, p0.y);
+    q1 = new Point(p1.x, p1.y);
+  }
+
+  let slope = -(q0.x - q1.x) / (q0.y - q1.y); // Note this is orthogonal to the line between p0 and p1
+
   let int =
-    (-(r0 ** 2 - r1 ** 2) + (p0.x ** 2 - p1.x ** 2) + (p0.y ** 2 - p1.y ** 2)) /
-    (2 * (p0.y - p1.y));
+    (-(r0 ** 2 - r1 ** 2) + (q0.x ** 2 - q1.x ** 2) + (q0.y ** 2 - q1.y ** 2)) /
+    (2 * (q0.y - q1.y));
   let a = 1 + slope ** 2;
-  let b = -2 * p0.x - 2 * slope * p0.y + 2 * slope * int;
-  let c = p0.x ** 2 + p0.y ** 2 - 2 * int * p0.y + int ** 2 - r0 ** 2;
+  let b = -2 * q0.x - 2 * slope * q0.y + 2 * slope * int;
+  let c = q0.x ** 2 + q0.y ** 2 - 2 * int * q0.y + int ** 2 - r0 ** 2;
   let x0 = (-b + Math.sqrt(b ** 2 - 4 * a * c)) / (2 * a);
   let x1 = (-b - Math.sqrt(b ** 2 - 4 * a * c)) / (2 * a);
   let y0 = slope * x0 + int;
   let y1 = slope * x1 + int;
-  return [new Point(x0, y0), new Point(x1, y1)];
+  let int0 = new Point(x0, y0);
+  let int1 = new Point(x1, y1);
+  if (horizontal) {
+    int0 = int0.rotate(new Point(0, 0), -90);
+    int1 = int1.rotate(new Point(0, 0), -90);
+  }
+  return [int0, int1];
 };
 
 class Point {
@@ -104,6 +128,7 @@ class Point {
       this.node.setAttribute("style", "pointer-events: none");
       //$("pointsgroup").prepend(this.node);
     } else {
+      this.node.setAttribute("id", this.en);
       $("pointsgroup").append(this.node);
     }
 
@@ -173,11 +198,7 @@ class Point {
     let q = (angle * Math.PI) / 180;
     let x = rx * Math.cos(q) - ry * Math.sin(q);
     let y = rx * Math.sin(q) + ry * Math.cos(q);
-    if (!this.virtual) {
-      return new Point(origin.x + x, origin.y + y, this.en, this.np);
-    } else {
-      return new Point(origin.x + x, origin.y + y);
-    }
+    return new Point(origin.x + x, origin.y + y);
   }
 
   async fadeIn(finalOpacity = 1) {
@@ -344,10 +365,12 @@ class Line {
     this.visible = false;
   }
 
-  async swing(around, q, extraSpeedmult = 1) {
+  async swing(around, q, extraSpeedmult = 1, cumulative = false) {
     // delete any current animations
-    for (let child of this.node.getElementsByTagName("animateTransform")) {
-      this.node.removeChild(child);
+    if (!cumulative) {
+      for (let child of this.node.getElementsByTagName("animateTransform")) {
+        this.node.removeChild(child);
+      }
     }
 
     let speedmult = $("sheet").speedmult * extraSpeedmult;
@@ -359,6 +382,7 @@ class Line {
       dur: Math.abs(q) / 180 / speedmult,
       fill: "freeze",
       begin: "indefinite",
+      additive: cumulative ? "sum" : "replace",
     });
     this.show();
     this.node.appendChild(anim);
@@ -379,8 +403,8 @@ class Arc {
     this.origin = origin;
     this.arc0 = arc0;
     this.arc1 = arc1;
-    let l0 = new Line(origin, arc0);
-    let l1 = new Line(origin, arc1);
+    let l0 = new Line(origin, arc0, true);
+    let l1 = new Line(origin, arc1, true);
     this.angle = angle(l0, l1);
     this.r = l0.norm;
     this.largeArc = largeArc;

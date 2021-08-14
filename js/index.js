@@ -1,6 +1,6 @@
 const sheet = $("sheet");
 //sheet.viewBox = { x: -100, y: -100, w: 400, h: 400 }; // The current viewBox status
-sheet.box = "-50 -25 200 183";
+sheet.box = "-50 -91.5 200 183";
 sheet.waitingForInput = false;
 const geom = {};
 sheet.speedmult = 1;
@@ -22,14 +22,14 @@ const newNP = (id, text) => {
   return newHTML("div", {
     class: "NP",
     id,
-    text
+    text,
   });
 };
 
 const newEN = (text) => {
   return newHTML("div", {
     class: "EN",
-    text
+    text,
   });
 };
 
@@ -41,7 +41,7 @@ const zoom = (newBox) => {
     to: newBox,
     dur: 2 / speedmult,
     fill: "freeze",
-    begin: "indefinite"
+    begin: "indefinite",
   });
   sheet.appendChild(anim);
   anim.beginElement();
@@ -82,33 +82,50 @@ const a1 = async () => {
 
 const a2 = async () => {
   // Retrieve existing geometry
-  let { A, B } = geom;
+  let { A, B, AB } = geom;
 
   // Perform step calculations
-  zoom("-250 -50 600 549");
-  const p0 = subtract(A, B);
-  const p1 = subtract(p0, B);
-  const p2 = p0.rotate(p1, 90);
-  const p3 = A.rotate(p1, 90);
-  const p4 = B.rotate(p1, 90);
-  const p5 = add(B, B).rotate(p1, 90);
-  const newLines = [
-    new Line(A, B, true),
-    new Line(p0, A, true),
-    new Line(p1, p0, true),
-    new Line(p2, p1, true),
-    new Line(p3, p2, true),
-    new Line(p4, p3, true)
-  ];
-  let l0 = new Line(B, p5, true);
-  let l1 = new Line(A, add(A, { x: 0, y: p5.y }), true);
-  let C = intersect(l0, l1);
-  C = new Point(C.x, C.y, "C", "ग");
-  const AC = new Line(A, C);
+  let p0 = extend(AB, 2 / 3);
+  let p1 = extend(AB, 1 / 3);
+  let l0 = new Line(A, p0, true);
+  let l1 = new Line(B, p1, true);
+  let [p3, p2] = twoCircles(A, l0.norm, B, l1.norm);
+  let a0 = new Arc(A, p2.rotate(A, -5), p2.rotate(A, 5), false, true, true);
+  let a1 = new Arc(B, p2.rotate(B, 5), p2.rotate(B, -5), false, false, true);
+  let a2 = new Arc(A, p3.rotate(A, 5), p3.rotate(A, -5), false, false, true);
+  let a3 = new Arc(B, p3.rotate(B, -5), p3.rotate(B, 5), false, true, true);
+  let magicAngle = angle(l0, new Line(A, p2));
+
+  let l2 = new Line(p2, p3, true);
+  let l3 = new Line(extend(l2, 0.45), extend(l2, 0.55), true);
+  let p4 = intersect(l3, AB);
+  let l4 = new Line(p4, B, true);
+  let p5 = extend(l4, 2 / 3);
+  let p6 = extend(l4, 1 / 3);
+  let l5 = new Line(p4, p5, true);
+  let l6 = new Line(B, p6, true);
+  let [p8, p7] = twoCircles(p4, l5.norm, B, l6.norm);
+  let a4 = new Arc(p4, p7.rotate(p4, -5), p7.rotate(p4, 5), false, true, true);
+  let a5 = new Arc(B, p7.rotate(B, 5), p7.rotate(B, -5), false, false, true);
+  let a6 = new Arc(p4, p8.rotate(p4, 5), p8.rotate(p4, -5), false, false, true);
+  let a7 = new Arc(B, p8.rotate(B, -5), p8.rotate(B, 5), false, true, true);
+
+  let l7 = new Line(p7, p8, true);
+  let l8 = new Line(extend(l7, 0.4), extend(l7, 0.6), true);
+  let p9 = intersect(l8, AB);
+
+  let l9 = new Line(A, B, true);
   let D = B.rotate(A, 90);
   D = new Point(D.x, D.y, "D", "घ");
-  let l2 = new Line(A, B, true);
-  const BD = new Line(B, D);
+  let l10 = new Line(p9, D, true);
+  let p11 = add(D, extend(AB, 1 / 4));
+  let l11 = new Line(B, p11, true);
+  let AD = new Line(A, D, true);
+  let C = intersect(l11, AD);
+  C = new Point(C.x, C.y, "C", "ग");
+  let AC = new Line(A, C);
+  let BC = new Line(B, C, true);
+  let BD = new Line(B, D);
 
   // Store new geometry
   geom.C = C;
@@ -127,81 +144,67 @@ const a2 = async () => {
   $("parallel").append(a2NP, a2EN);
   a2NP.scrollIntoView();
 
-  for (let line of newLines) {
-    theta = line.p.x == p1.x && line.p.y == p1.y ? 90 : 180;
-    await line.swing(line.p, theta);
-  }
-  await l0.draw();
-  await l1.draw();
+  zoom("-50 -91.5 200 183");
+  l0.show();
+  l1.show();
+  l0.swing(A, magicAngle - 5);
+  await l1.swing(B, -magicAngle + 5);
+  a0.draw();
+  a1.draw();
+  l0.swing(A, 10, 1, true);
+  await l1.swing(B, -10, 1, true);
+  l0.swing(A, -2 * magicAngle, 1, true);
+  await l1.swing(B, 2 * magicAngle, 1, true);
+  a2.draw();
+  a3.draw();
+  l0.swing(A, -10, 1, true);
+  await l1.swing(B, 10, 1, true);
+  l0.fadeOut();
+  l1.fadeOut();
+  await l2.draw();
+  a0.fadeOut();
+  a1.fadeOut();
+  a2.fadeOut();
+  a3.fadeOut();
+  l2.fadeOut();
+  await l3.fadeIn();
+
+  l5.show();
+  l6.show();
+  l5.swing(p4, magicAngle - 5);
+  await l6.swing(B, -magicAngle + 5);
+  a4.draw();
+  a5.draw();
+  l5.swing(p4, 10, 1, true);
+  await l6.swing(B, -10, 1, true);
+  l5.swing(p4, -2 * magicAngle, 1, true);
+  await l6.swing(B, 2 * magicAngle, 1, true);
+  a6.draw();
+  a7.draw();
+  l5.swing(p4, -10, 1, true);
+  await l6.swing(B, 10, 1, true);
+  l5.fadeOut();
+  l6.fadeOut();
+  await l7.draw();
+  l3.fadeOut();
+  a4.fadeOut();
+  a5.fadeOut();
+  a6.fadeOut();
+  a7.fadeOut();
+  l7.fadeOut();
+  await l8.fadeIn();
   zoom("-50 -25 200 183");
-  newLines.forEach((line) => line.fadeOut());
-  C.fadeIn();
-  l0.fadeOut();
-  l1.fadeOut();
-  await AC.fadeIn();
-  await idle(500);
-  await l2.swing(A, 90, 0.5);
+  await l9.swing(A, 90);
   await D.fadeIn();
-  l2.hide();
-  await BD.draw();
-};
-
-const a2_fast = async () => {
-  // Retrieve existing geometry
-  let { A, B } = geom;
-
-  // Perform step calculations
-  const p0 = subtract(A, B);
-  const p1 = subtract(p0, B);
-  const p2 = p0.rotate(p1, 90);
-  const p3 = A.rotate(p1, 90);
-  const p4 = B.rotate(p1, 90);
-  const p5 = add(B, B).rotate(p1, 90);
-  const newLines = [
-    new Line(A, B, true),
-    new Line(p0, A, true),
-    new Line(p1, p0, true),
-    new Line(p2, p1, true),
-    new Line(p3, p2, true),
-    new Line(p4, p3, true)
-  ];
-  let l0 = new Line(B, p5, true);
-  let l1 = new Line(A, add(A, { x: 0, y: p5.y }), true);
-  let C = intersect(l0, l1);
-  C = new Point(C.x, C.y, "C", "ग");
-  const AC = new Line(A, C);
-  let D = B.rotate(A, 90);
-  D = new Point(D.x, D.y, "D", "घ");
-  let l2 = new Line(A, B, true);
-  const BD = new Line(B, D);
-
-  // Store new geometry
-  geom.C = C;
-  geom.D = D;
-  geom.AC = AC;
-  geom.BD = BD;
-
-  // Animate
-  let a2NP = newNP(
-    "a2",
-    "(२) क बाट सीधा माथि ग सम्म क ख को लम्बाई जतिमा क ख कै तृतीयांश थप्दा जति हुन्छ त्यति लामो हुने गरी क ग रेखा खिच्ने । क ग मा क ख को लम्बाई जति लिई घ चिन्हो लगाउने । ख र घ जोड्ने ।"
-  );
-  let a2EN = newEN(
-    "(2) From A draw a line AC perpendicular to AB making AC equal to AB plus one third AB. From AC mark off D making line AD equal to line AB. Join B and D."
-  );
-  $("parallel").append(a2NP, a2EN);
-  a2NP.scrollIntoView();
-
-  l0.draw();
-  l1.draw();
-  newLines.forEach((line) => line.fadeOut());
+  l10.draw();
+  await BC.draw();
+  await AC.draw();
   C.fadeIn();
-  l0.fadeOut();
-  l1.fadeOut();
-  AC.fadeIn();
-  l2.swing(A, 90);
-  await D.fadeIn();
-  l2.hide();
+  l7.fadeOut();
+  l8.fadeOut();
+  l9.fadeOut();
+  l10.fadeOut();
+  BC.fadeOut();
   await BD.draw();
 };
 
@@ -769,7 +772,7 @@ const b18 = async () => {
     width: 100,
     height: 80,
     rx: 15,
-    fill: "#89cff0"
+    fill: "#89cff0",
   });
   let line1 = modal.appendSVG("text", {
     fill: "black",
@@ -778,7 +781,7 @@ const b18 = async () => {
     "text-anchor": "middle",
     x: 50,
     y: -85,
-    text: "How do you wish"
+    text: "How do you wish",
   });
   let line2 = modal.appendSVG("text", {
     fill: "black",
@@ -787,28 +790,28 @@ const b18 = async () => {
     "text-anchor": "middle",
     x: 50,
     y: -70,
-    text: "to interpret step 18?"
+    text: "to interpret step 18?",
   });
   let thumb1 = modal.appendSVG("image", {
     x: 5,
     y: -55,
     width: 28,
     height: 21,
-    href: "thumb1.png"
+    href: "thumb1.png",
   });
   let thumb2 = modal.appendSVG("image", {
     x: 36,
     y: -55,
     width: 28,
     height: 21,
-    href: "thumb2.png"
+    href: "thumb2.png",
   });
   let thumb3 = modal.appendSVG("image", {
     x: 67,
     y: -55,
     width: 28,
     height: 21,
-    href: "thumb3.png"
+    href: "thumb3.png",
   });
   sheet.append(modal);
 
@@ -1199,7 +1202,7 @@ const d24 = async () => {
     PNQ,
     RTSprime,
     sunrays,
-    moonrays
+    moonrays,
   } = geom;
 
   // Perform step calculations
@@ -1207,7 +1210,7 @@ const d24 = async () => {
     class: "border",
     stroke: "none",
     fill: "url(#bordercolor)",
-    d: `M ${Aborder.x} ${Aborder.y} L ${Bborder.x} ${Bborder.y} ${Eborder.x} ${Eborder.y} ${Gborder.x} ${Gborder.y} ${Cborder.x} ${Cborder.y} z`
+    d: `M ${Aborder.x} ${Aborder.y} L ${Bborder.x} ${Bborder.y} ${Eborder.x} ${Eborder.y} ${Gborder.x} ${Gborder.y} ${Cborder.x} ${Cborder.y} z`,
   });
   const field = newSVG("path", {
     class: "field",
@@ -1215,7 +1218,7 @@ const d24 = async () => {
     fill: "url(#fieldcolor)",
     d: ["M", A.x, A.y, "L", B.x, B.y, E.x, E.y, G.x, G.y, C.x, C.y, "z"].join(
       " "
-    )
+    ),
   });
   const moon0 = newSVG("path", {
     class: "moon",
@@ -1240,8 +1243,8 @@ const d24 = async () => {
       0,
       P.x,
       P.y,
-      "z"
-    ].join(" ")
+      "z",
+    ].join(" "),
   });
   const moon1 = newSVG("circle", {
     class: "moon",
@@ -1249,20 +1252,20 @@ const d24 = async () => {
     fill: "url(#symbolcolor)",
     cx: T.x,
     cy: T.y,
-    r: RTSprime.r
+    r: RTSprime.r,
   });
   const moon2 = newSVG("path", {
     class: "moon",
     stroke: "none",
     fill: "url(#symbolcolor)",
-    d: moonrays.node.getAttribute("d") + " z"
+    d: moonrays.node.getAttribute("d") + " z",
   });
 
   const sun = newSVG("path", {
     class: "sun",
     stroke: "none",
     fill: "url(#symbolcolor)",
-    d: sunrays.node.getAttribute("d") + "z"
+    d: sunrays.node.getAttribute("d") + "z",
   });
 
   sheet.prepend(border, field, moon0, moon1, moon2, sun);
@@ -1274,7 +1277,7 @@ const d24 = async () => {
     additive: "sum",
     dur: 4 / sheet.speedmult,
     fill: "freeze",
-    begin: "indefinite"
+    begin: "indefinite",
   });
   const t2 = t1.cloneNode();
   const t3 = t1.cloneNode();
@@ -1322,14 +1325,14 @@ const d24 = async () => {
     y: 0,
     width: 50,
     height: 400,
-    fill: "url(#shimmer)"
+    fill: "url(#shimmer)",
   });
   const shimmer3 = shimmer2.appendSVG("animate", {
     attributeName: "x",
     from: -300,
     to: 100,
     dur: 1 / sheet.speedmult,
-    begin: "indefinite"
+    begin: "indefinite",
   });
   sheet.append(shimmer1);
   await idle(1000 / sheet.speedmult);
@@ -1344,8 +1347,8 @@ let line1 = titlescreen.appendSVG("text", {
   "font-size": 18,
   "text-anchor": "middle",
   x: 50,
-  y: -85,
-  text: "LET’S PLAY"
+  y: -20,
+  text: "LET’S PLAY",
 });
 let line2 = titlescreen.appendSVG("text", {
   transform: "scale (1 -1)",
@@ -1354,8 +1357,8 @@ let line2 = titlescreen.appendSVG("text", {
   "font-size": 10,
   "text-anchor": "middle",
   x: 50,
-  y: -72,
-  text: "The flag of Nepal"
+  y: -7,
+  text: "The flag of Nepal",
 });
 let line3 = titlescreen.appendSVG("text", {
   transform: "scale (1 -1)",
@@ -1364,8 +1367,8 @@ let line3 = titlescreen.appendSVG("text", {
   "font-size": 10,
   "text-anchor": "middle",
   x: 50,
-  y: -50,
-  text: "अग्रिम गर्न क्लिक गर्नुहोस्"
+  y: 15,
+  text: "अग्रिम गर्न क्लिक गर्नुहोस्",
 });
 let line4 = titlescreen.appendSVG("text", {
   transform: "scale (1 -1)",
@@ -1374,8 +1377,8 @@ let line4 = titlescreen.appendSVG("text", {
   "font-size": 10,
   "text-anchor": "middle",
   x: 50,
-  y: -35,
-  text: "Click to proceed"
+  y: 30,
+  text: "Click to proceed",
 });
 
 const steps = [
@@ -1402,7 +1405,7 @@ const steps = [
   c21,
   c22,
   d23,
-  d24
+  d24,
 ];
 let step = 0;
 let clicked = false;
