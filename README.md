@@ -31,8 +31,6 @@ In the third, each triangle spans 22.5° like before, but a ninth and tenth tria
 
 It's not a big deal, of course. If you search online you'll see plenty of Nepalese flags, flown by Nepalese officials, that skew pretty far from all of these interpretations. I rather like the ones where the moon looks like a lotus flower.
 
-Oh, I have one other question about the construction. Step (2) asks us to draw a line 4/3 the length of an existing line. With just a compass and straightedge (no ruler), that's doable, but the only way I know to do it requires a lot of additional paper. Is there a more compact way to do this step without a ruler? And even if there is such a way, don't you think it would have been far easier to start with the longer edge, AC, and then say "Draw a line 3/4 the length of the existing line"? It's a lot easier to do two bisections than to make a similar triangle three times bigger than your flag.
-
 ## External resources
 
 * [Constitution of Nepal (English, PDF)](https://www.lawcommission.gov.np/en/wp-content/uploads/2021/01/Constitution-of-Nepal.pdf)
