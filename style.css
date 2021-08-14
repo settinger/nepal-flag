@@ -1,0 +1,53 @@
+@font-face {
+  font-family: "Noto Sans Devanagari";
+  src: url("./fonts/NotoSansDevanagariUI-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Noto Serif Devanagari";
+  src: url("./fonts/NotoSerifDevanagari-Regular.ttf");
+}
+
+@font-face {
+  font-family: "Devanagari New";
+  src: url("./fonts/Devnew.ttf");
+}
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.container {
+  max-height: 25vh;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.parallel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.preamble {
+  text-align: center;
+}
+
+.NP {
+  font-family: "Noto Serif Devanagari";
+  grid-column: 1;
+  line-height: 1.25;
+  padding-bottom: 0.5em;
+  padding-right: 0.5em;
+}
+
+.EN {
+  grid-column: 2;
+  padding-bottom: 0.5em;
+  padding-left: 0.5em;
+}
+
+.break {
+  grid-column: 1;
+  height: 1.5em;
+}
