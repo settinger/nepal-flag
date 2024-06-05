@@ -23,6 +23,7 @@ Is the Nepali version less ambiguous? That one says:
 I don't speak Nepali, and I don't trust Google Translate to be accurate with regards to precise constructions. Do you know what it says?
 
 I've identified three "reasonable" interpretations of step 18, shown here:
+
 ![Moon construction interpretation 1](flag1.png) ![Moon construction interpretation 2](flag2.png) ![Moon construction interpretation 3](flag3.png)
 
 In the first one, each triangle spans 1/8 of the arc from step (17). If you look closely, there are tiny tiny crimson slivers between the crescent and the rays, which is kind of a bummer. I think this solution would be the best if not for that.
