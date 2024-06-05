@@ -29,7 +29,7 @@ In the first one, each triangle spans 1/8 of the arc from step (17). If you look
 
 In the second one, each triangle spans 22.5°, 1/8 of the semicircle from step (16). Based on some brief Flickr browsing, this seems to be the most common flag variant in real life (i.e. not digital renderings).
 
-In the third, each triangle spans 22.5° like before, but a ninth and tenth triangle have been added to cover the additional arc length. This is by far the most common digital version of the flag. This is the version one sees on Wikipedia. This is the version used in the Nepal onstitution! But the instructions do make it clear that there are to be *eight* triangles, not ten. So...is this unconstitutional?
+In the third, each triangle spans 22.5° like before, but a ninth and tenth triangle have been added to cover the additional arc length. This is by far the most common digital version of the flag. This is the version one sees on Wikipedia. This is the version used in the Nepal constitution! But the instructions do make it clear that there are to be *eight* triangles, not ten. So...is this unconstitutional?
 
 It's not a big deal, of course. If you search online you'll see plenty of Nepalese flags, flown by Nepalese officials, that skew pretty far from all of these interpretations. I rather like the ones where the moon looks like a lotus flower.
 
