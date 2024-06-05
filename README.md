@@ -33,6 +33,18 @@ In the third, each triangle spans 22.5° like before, but a ninth and tenth tria
 
 It's not a big deal, of course. If you search online you'll see plenty of Nepalese flags, flown by Nepalese officials, that skew pretty far from all of these interpretations. I rather like the ones where the moon looks like a lotus flower.
 
+## AN UPDATE FROM A NEPALI SPEAKER
+
+I dusted off my unused Reddit account just so I could post a request on the Vexillology and BadNepaliFlags subreddits. Three months later, I got this response from user hereforbeer98:
+
+> Hi, I’m not sure if you figured this out yet but I speak Nepali and reviewed the document, it just says make 8 similar triangles. I believe the second interpretation is correct. Never paid much mind to it ever but then again we never had to draw an official flag by following the constitution.
+> 
+> For what it’s worth, the Nepali seal also has that version: https://thumbs.dreamstime.com/z/nepal-coat-arms-d-rendered-112301745.jpg
+> 
+> Glad to see your interest in this and lmk if you need help w anything else Nepali. Namaste!
+
+Thank you very much to this user for confirming both versions of the constitution are equally ambiguous!
+
 ## External resources
 
 * [Constitution of Nepal (English, PDF)](https://www.lawcommission.gov.np/en/wp-content/uploads/2021/01/Constitution-of-Nepal.pdf)
